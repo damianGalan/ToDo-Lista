@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" data-ng-app="app">
+<head>
+    <title>AngularJS - ToDo List</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.css" />
+
+</head>
+<style>
+	.done-true{	
+		text-decoration: line-through;
+		color: #ddd;
+	}
+</style>
+<body data-ng-controller="defaultCtrl">
+
+	<div class="container">
+		<div class="panel panel-success">
+			<div class="panel-heading">
+				<h3 class="panel-title">DODAJ ZADANIE!</h3>
+			</div>
+			<div class="panel-body">
+				<form name="form" data-ng-submit="addToList()">
+					To do: <textarea class="form-control" name="whatToDo" data-ng-model="formData.whatToDo" required></textarea>
+					Typ: <select class="form-control" name="type" data-ng-model="formData.type" data-ng-options="value.name for value in categories" required></select>
+					Przybliżony czas: <select class="form-control" name="time" data-ng-model="formData.time" data-ng-options="value for value in time" required></select>
+					<br/>
+					<button class="btn btn-success" data-ng-disabled="form.$invalid">Dodaj <span class="glyphicon glyphicon-ok"></span></button>
+				</form>
+			</div>
+		</div>
+	
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				<h3 class="panel-title">ToDo LISTA</h3>
+			</div>
+			<div class="panel-body">
+				<ul>
+					<li data-ng-repeat="todo in todos">
+						<input type="checkbox" data-ng-model="todo.done" title="Completed!"/>
+						<span class="done-{{todo.done}}">{{todo.title}}</span> ({{todo.time}}h) <span class="glyphicon glyphicon-{{todo.type.gico}} done-{{todo.done}}"></span>
+					</li>
+				</ul>
+				<button class="btn btn-danger" data-ng-click="delete()">Usun zakonczone <span class="glyphicon glyphicon-remove"></span></button>
+			</div>
+		</div>
+		
+	</div>
+<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+<script src="https://code.angularjs.org/1.3.0-rc.1/angular.js"></script>
+<script>
+	
+	var app = angular.module('app', []);
+	
+	app.controller('defaultCtrl', ['$scope', 'todos', function($scope, todos){
+		$scope.toggleJson = false;
+		$scope.time = [0.5, 1, 2, 3, 5, 8];
+		$scope.categories = [
+			{name: 'Personal' , gico: 'heart'},
+			{name: 'Health' , gico: 'pulse'},
+			{name: 'Learning' , gico: 'book'},
+			{name: 'Bussiness' , gico: 'usd'},
+			{name: 'Home' , gico: 'home'},
+			{name: 'Other' , gico: 'paperclip'}];
+			
+		$scope.formData = {type: $scope.categories[0], time: $scope.time[0]};
+
+		$scope.todos = todos;
+		$scope.addToList = function(){
+			$scope.todos.push({'title':$scope.formData.whatToDo, 'done':false, 'type':$scope.formData.type, 'time':$scope.formData.time});
+			$scope.formData.whatToDo = '';
+		};
+		
+		$scope.delete = function(){
+			$scope.todos = $scope.todos.filter(function(item){
+				return !item.done;
+			});
+		};
+	}]);
+	
+	app.factory('todos', function(){
+		return [
+			{
+				'title': 'Spotkanie biznesowe' , 'done': false , 'type': {'name': 'Personal' , 'gico' : 'heart'}, 'time': 3
+			},
+			{
+				'title': 'Silownia' , 'done': false , 'type': {'name': 'Health' , 'gico' : 'tint'}, 'time': 2
+			},
+			{
+				'title': 'Nauka AngularJs' , 'done': false , 'type': {'name': 'Learning' , 'gico' : 'book'}, 'time': 4
+			},
+			{
+				'title': 'Spotkanie towarzyskie' , 'done': false , 'type': {'name': 'Bussiness' , 'gico' : 'usd'}, 'time': 1
+			}
+		];
+	});
+</script>
+</body>
+</html>
